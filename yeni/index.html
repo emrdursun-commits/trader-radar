@@ -1,0 +1,228 @@
+<!doctype html>
+<html lang="tr">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<title>TRADER Radar</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d1117;--card:#161b22;--line:#262d36;--ink:#e6edf3;--mut:#8b949e;--g:#26a69a;--r:#ef5350;--gold:#f5c451}
+*{box-sizing:border-box}
+body{margin:0;background:var(--bg);color:var(--ink);font-family:Inter,system-ui,sans-serif;font-size:14px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;padding:18px 24px;border-bottom:1px solid var(--line)}
+header h1{margin:0;font-size:22px;font-weight:800;letter-spacing:.3px}
+header .sub{color:var(--mut);font-size:12.5px;margin-top:2px}
+.live{display:flex;align-items:center;gap:8px;color:var(--mut);font-size:12.5px}
+.dot{width:8px;height:8px;border-radius:50%;background:var(--g);box-shadow:0 0 0 0 rgba(38,166,154,.6);animation:p 2s infinite}
+@keyframes p{70%{box-shadow:0 0 0 8px rgba(38,166,154,0)}100%{box-shadow:0 0 0 0 rgba(38,166,154,0)}}
+.wrap{display:grid;grid-template-columns:minmax(0,1fr) 380px;gap:20px;padding:20px 24px;max-width:1500px;margin:0 auto}
+.side{display:flex;flex-direction:column;gap:20px}
+.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:18px}
+.card h2{margin:0 0 14px;font-size:15px;font-weight:700;display:flex;justify-content:space-between;align-items:center}
+.card h2 small{color:var(--mut);font-weight:500;font-size:12px}
+.idx{display:grid;grid-template-columns:repeat(3,1fr);gap:12px;margin-bottom:16px}
+.ix{background:#0f141a;border:1px solid var(--line);border-radius:12px;padding:12px 14px}
+.ix .n{color:var(--mut);font-size:12px;font-weight:600}
+.ix .v{font-size:22px;font-weight:800;margin-top:4px}
+.ix .c{font-weight:700;font-size:13px;margin-top:2px}
+.pos{color:var(--g)}.neg{color:var(--r)}
+.breadth{margin-bottom:18px}
+.bl{display:flex;justify-content:space-between;font-size:12.5px;color:var(--mut);margin-bottom:6px}
+.bl b{color:var(--ink)}
+.bar{display:flex;height:12px;border-radius:6px;overflow:hidden;background:#222}
+.bar i{display:block;height:100%}
+.sec{margin-top:14px}
+.sec h3{margin:0 0 8px;font-size:12px;color:var(--mut);font-weight:600;text-transform:uppercase;letter-spacing:.6px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(112px,1fr));gap:8px}
+.tile{border-radius:10px;padding:10px 11px;min-height:74px;transition:background .4s}
+.tile b{font-size:14px}
+.tile .px{font-size:12px;opacity:.85;margin-top:3px}
+.tile .ch{font-size:16px;font-weight:800;margin-top:2px}
+.legend{display:flex;gap:4px;align-items:center;font-size:11px;color:var(--mut);margin-top:14px}
+.legend span{width:26px;height:8px;border-radius:2px;display:inline-block}
+table{width:100%;border-collapse:collapse;font-size:12.5px}
+th{color:var(--mut);font-weight:600;text-align:left;padding:6px 4px;border-bottom:1px solid var(--line);font-size:11.5px}
+td{padding:7px 4px;border-bottom:1px solid #1d232b}
+td.r,th.r{text-align:right}
+.pill{font-size:10.5px;font-weight:700;padding:2px 6px;border-radius:5px;color:#fff}
+.pl{background:var(--g)}.ps{background:var(--r)}
+.empty{color:var(--mut);padding:10px 0;font-size:13px}
+.tabs{display:flex;gap:6px;margin-bottom:12px}
+.tabs button{flex:1;background:#0f141a;color:var(--mut);border:1px solid var(--line);border-radius:8px;padding:7px;font:600 12.5px Inter,sans-serif;cursor:pointer}
+.tabs button.on{background:#1f2630;color:var(--ink);border-color:#3a4350}
+.sum{display:flex;justify-content:space-between;align-items:baseline;background:#0f141a;border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:10px}
+.sum .k{color:var(--mut);font-size:12px}.sum .v{font-size:20px;font-weight:800}
+.perlist .row{display:flex;justify-content:space-between;padding:8px 2px;border-bottom:1px solid #1d232b;font-size:13px}
+.perlist .row span:first-child{color:var(--mut)}
+.perlist .row b{font-weight:700}
+.scroll{max-height:360px;overflow:auto}
+footer{color:var(--mut);font-size:11.5px;text-align:center;padding:10px 24px 28px}
+@media(max-width:980px){.wrap{grid-template-columns:1fr;padding:14px}.idx{grid-template-columns:1fr 1fr 1fr}.ix .v{font-size:17px}header{padding:14px}}
+</style>
+</head>
+<body>
+<header>
+  <div><h1>TRADER Radar</h1><div class="sub">BIST30 · VİOP30 · Gün içi işlemler</div></div>
+  <div class="live"><span class="dot"></span><span id="upd">yükleniyor…</span></div>
+</header>
+
+<div class="wrap">
+  <main class="card">
+    <h2>📡 Radar <small>15 dakikada bir yenilenir</small></h2>
+    <div class="idx">
+      <div class="ix"><div class="n">VİOP30</div><div class="v" id="v-viop">–</div><div class="c" id="c-viop"></div></div>
+      <div class="ix"><div class="n">BIST 30</div><div class="v" id="v-x30">–</div><div class="c" id="c-x30"></div></div>
+      <div class="ix"><div class="n">BIST 100</div><div class="v" id="v-x100">–</div><div class="c" id="c-x100"></div></div>
+    </div>
+    <div class="breadth">
+      <div class="bl"><span>Piyasa genişliği · <b id="b-up">0</b> yükselen · <b id="b-dn">0</b> düşen · <b id="b-eq">0</b> yatay</span><span>Ortalama <b id="b-avg">–</b></span></div>
+      <div class="bar"><i id="bar-up" style="background:var(--g);width:0"></i><i id="bar-eq" style="background:#555;width:0"></i><i id="bar-dn" style="background:var(--r);width:0"></i></div>
+    </div>
+    <div id="heat"></div>
+    <div class="legend">−%4 <span style="background:#b71c1c"></span><span style="background:#e04a46"></span><span style="background:#7a3436"></span><span style="background:#2b3038"></span><span style="background:#1f5c52"></span><span style="background:#1f9a85"></span><span style="background:#13b58f"></span> +%4</div>
+  </main>
+
+  <aside class="side">
+    <section class="card">
+      <h2>💼 Güncel işlemlerim <small id="acik-n"></small></h2>
+      <div id="acik"></div>
+    </section>
+    <section class="card">
+      <h2>📊 Performans <small>portföy %</small></h2>
+      <div class="tabs"><button data-t="gecmis" class="on">Geçmiş</button><button data-t="hafta">Haftalık</button><button data-t="ay">Aylık</button></div>
+      <div id="perf"></div>
+    </section>
+  </aside>
+</div>
+<footer>TRADER Radar · Bilgilendirme amaçlıdır, yatırım tavsiyesi değildir. · Performans, kaldıraçlı VİOP işlemlerinin portföy ağırlığına göre getirisidir.</footer>
+
+<script>
+const SEK = {
+  "Bankalar": ["AKBNK","GARAN","ISCTR","YKBNK","VAKBN"],
+  "Holding & İnşaat": ["KCHOL","SAHOL","ENKAI","EKGYO"],
+  "Sanayi & Kimya": ["EREGL","KRDMD","SASA","PETKM","GUBRF","SISE"],
+  "Enerji & Madencilik": ["TUPRS","ASTOR","TRALT","TRMET"],
+  "Ulaştırma": ["THYAO","PGSUS","TAVHL"],
+  "Otomotiv & Savunma": ["TOASO","FROTO","ASELS"],
+  "Perakende & Gıda": ["BIMAS","MGROS","AEFES"],
+  "Telekom": ["TCELL","TTKOM"]
+};
+const ALL = Object.values(SEK).flat();
+const fmt = (x, d=2) => x==null||isNaN(x) ? "–" : x.toLocaleString("tr-TR",{minimumFractionDigits:d,maximumFractionDigits:d});
+const pct = x => (x>0?"+":x<0?"−":"") + "%" + fmt(Math.abs(x));
+const cls = x => x>0?"pos":x<0?"neg":"";
+
+function color(c){
+  const t = Math.max(-4, Math.min(4, c)) / 4, a = Math.abs(t);
+  if (Math.abs(c) < 0.05) return "#2b3038";
+  const base=[43,48,56], to = t>0 ? [19,181,143] : [214,52,48];
+  const m = 0.25 + 0.75*a;
+  return `rgb(${base.map((b,i)=>Math.round(b+(to[i]-b)*m)).join(",")})`;
+}
+
+async function scan(market, tickers, cols){
+  const r = await fetch(`https://scanner.tradingview.com/${market}/scan`, {method:"POST", body: JSON.stringify({symbols:{tickers}, columns:cols})});
+  const j = await r.json(); const o = {};
+  for (const x of j.data||[]) o[x.s] = x.d;
+  return o;
+}
+
+let FUT = {};
+async function radar(){
+  try{
+    const [sp, fu] = await Promise.all([
+      scan("turkey", ALL.map(s=>"BIST:"+s).concat(["BIST:XU030","BIST:XU100"]), ["close","change"]),
+      scan("futures", ["BIST:XU030D1!"].concat(acikSyms().map(s=>`BIST:${s}1!`)), ["close","change"])
+    ]);
+    FUT = fu;
+    const put = (id, d, dec) => { if(!d) return; document.getElementById("v-"+id).textContent = fmt(d[0],dec); const c=document.getElementById("c-"+id); c.textContent=pct(d[1]); c.className="c "+cls(d[1]); };
+    put("viop", fu["BIST:XU030D1!"], 0); put("x30", sp["BIST:XU030"], 0); put("x100", sp["BIST:XU100"], 0);
+    let up=0, dn=0, eq=0, sum=0, n=0, h="";
+    for (const [sek, list] of Object.entries(SEK)){
+      h += `<section class="sec"><h3>${sek}</h3><div class="grid">`;
+      for (const s of list){
+        const d = sp["BIST:"+s]; if(!d){ continue; }
+        const c = d[1]; n++; sum+=c; if (c>0.05) up++; else if (c<-0.05) dn++; else eq++;
+        h += `<div class="tile" style="background:${color(c)}"><b>${s}</b><div class="px">${fmt(d[0])}</div><div class="ch">${pct(c)}</div></div>`;
+      }
+      h += `</div></section>`;
+    }
+    document.getElementById("heat").innerHTML = h;
+    document.getElementById("b-up").textContent=up; document.getElementById("b-dn").textContent=dn; document.getElementById("b-eq").textContent=eq;
+    const avg = n? sum/n : 0, ba=document.getElementById("b-avg"); ba.textContent=pct(avg); ba.className=cls(avg);
+    const T = up+dn+eq||1;
+    document.getElementById("bar-up").style.width = up/T*100+"%";
+    document.getElementById("bar-eq").style.width = eq/T*100+"%";
+    document.getElementById("bar-dn").style.width = dn/T*100+"%";
+    document.getElementById("upd").textContent = "Son güncelleme " + new Date().toLocaleTimeString("tr-TR",{hour:"2-digit",minute:"2-digit"});
+    acikCiz();
+  }catch(e){ document.getElementById("upd").textContent = "Veri alınamadı, tekrar denenecek"; }
+}
+
+// ───── İşlemler ─────
+let ISL = {acik:[], kapanan:[]};
+const acikSyms = () => ISL.acik.filter(p=>p.sym!=="XU030").map(p=>p.sym);
+const getiri = (p, px) => (px - p.entry) / p.entry * p.dir * p.lev * 100;          // kaldıraçlı %
+const portfoy = p => getiri(p, p.exit) * p.weight;                                   // portföy %
+const tarih = s => { const [g,sa] = s.split(" "); const [d,m,y] = g.split("."); const [hh,mm]=(sa||"0:0").split(":"); return new Date(+y, m-1, +d, +hh, +mm); };
+const yon = d => d===1 ? '<span class="pill pl">LONG</span>' : '<span class="pill ps">SHORT</span>';
+const ad = s => s==="XU030" ? "VİOP30" : s;
+
+function acikCiz(){
+  const el = document.getElementById("acik");
+  document.getElementById("acik-n").textContent = ISL.acik.length ? ISL.acik.length + " açık" : "";
+  if (!ISL.acik.length){ el.innerHTML = '<div class="empty">Şu an açık işlem yok.</div>'; return; }
+  let h = '<table><tr><th>Kontrat</th><th>Yön</th><th class="r">Giriş</th><th class="r">Son</th><th class="r">Kaldıraçlı</th></tr>';
+  for (const p of ISL.acik){
+    const d = FUT[p.sym==="XU030" ? "BIST:XU030D1!" : `BIST:${p.sym}1!`], px = d ? d[0] : null;
+    const g = px!=null ? getiri(p, px) : null, dec = p.entry>=1000?0:2;
+    h += `<tr><td><b>${ad(p.sym)}</b><br><small style="color:var(--mut)">%${Math.round(p.weight*100)} poz.</small></td><td>${yon(p.dir)}</td><td class="r">${fmt(p.entry,dec)}</td><td class="r">${fmt(px,dec)}</td><td class="r ${cls(g)}"><b>${g==null?"–":pct(g)}</b></td></tr>`;
+  }
+  el.innerHTML = h + "</table>";
+}
+
+function hafta(d){ const t=new Date(d); t.setHours(0,0,0,0); const g=(t.getDay()+6)%7; t.setDate(t.getDate()-g); return t; }
+let TAB = "gecmis";
+function perfCiz(){
+  const el = document.getElementById("perf"), K = ISL.kapanan.slice().sort((a,b)=>tarih(b.kapanis)-tarih(a.kapanis));
+  if (!K.length){ el.innerHTML='<div class="empty">Henüz kapanan işlem yok.</div>'; return; }
+  const now = new Date(), w0 = hafta(now), m0 = new Date(now.getFullYear(), now.getMonth(), 1);
+  const topla = arr => arr.reduce((s,p)=>s+portfoy(p),0);
+  if (TAB==="gecmis"){
+    let h = `<div class="sum"><span class="k">Bu hafta</span><span class="v ${cls(topla(K.filter(p=>tarih(p.kapanis)>=w0)))}">${pct(topla(K.filter(p=>tarih(p.kapanis)>=w0)))}</span></div>`;
+    h += '<div class="scroll"><table><tr><th>Tarih</th><th>Kontrat</th><th class="r">Giriş → Çıkış</th><th class="r">Portföy</th></tr>';
+    for (const p of K){ const v=portfoy(p), dec=p.entry>=1000?0:2;
+      h += `<tr><td>${p.kapanis.slice(0,5)}<br><small style="color:var(--mut)">${p.kapanis.slice(11)}</small></td><td><b>${ad(p.sym)}</b> ${yon(p.dir)}<br><small style="color:var(--mut)">%${Math.round(p.weight*100)} · ${pct(getiri(p,p.exit))} kaldıraçlı</small></td><td class="r">${fmt(p.entry,dec)} → ${fmt(p.exit,dec)}</td><td class="r ${cls(v)}"><b>${pct(v)}</b></td></tr>`; }
+    el.innerHTML = h + "</table></div>"; return;
+  }
+  const grp = {};
+  for (const p of K){ const d=tarih(p.kapanis);
+    const k = TAB==="hafta" ? hafta(d).getTime() : new Date(d.getFullYear(), d.getMonth(), 1).getTime();
+    (grp[k] = grp[k] || []).push(p); }
+  const ay = ["Ocak","Şubat","Mart","Nisan","Mayıs","Haziran","Temmuz","Ağustos","Eylül","Ekim","Kasım","Aralık"];
+  const cur = topla(K.filter(p=>tarih(p.kapanis) >= (TAB==="hafta"?w0:m0)));
+  let h = `<div class="sum"><span class="k">${TAB==="hafta"?"Bu hafta":"Bu ay"}</span><span class="v ${cls(cur)}">${pct(cur)}</span></div><div class="perlist">`;
+  for (const k of Object.keys(grp).sort((a,b)=>b-a)){
+    const d = new Date(+k), arr = grp[k], v = topla(arr), kz = arr.filter(p=>portfoy(p)>0).length;
+    let lab;
+    if (TAB==="hafta"){ const e=new Date(d); e.setDate(e.getDate()+4); lab = `${d.getDate()} ${ay[d.getMonth()]} – ${e.getDate()} ${ay[e.getMonth()]}`; }
+    else lab = `${ay[d.getMonth()]} ${d.getFullYear()}`;
+    h += `<div class="row"><span>${lab} · ${arr.length} işlem, ${kz} kârlı</span><b class="${cls(v)}">${pct(v)}</b></div>`;
+  }
+  el.innerHTML = h + "</div>";
+}
+document.querySelectorAll(".tabs button").forEach(b => b.onclick = () => {
+  document.querySelectorAll(".tabs button").forEach(x=>x.classList.remove("on")); b.classList.add("on"); TAB=b.dataset.t; perfCiz(); });
+
+async function islemler(){
+  try{ ISL = await fetch("islemler.json?t="+Date.now(), {cache:"no-store"}).then(r=>r.json()); }catch(e){}
+  acikCiz(); perfCiz();
+}
+
+islemler().then(radar);
+setInterval(radar, 15*60*1000);
+setInterval(islemler, 5*60*1000);
+</script>
+</body>
+</html>

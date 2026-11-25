@@ -1,0 +1,86 @@
+{
+ "guncel": "25.11.2026 21:55",
+ "acik": [],
+ "kapanan": [
+  {
+   "sym": "XU030",
+   "dir": -1,
+   "entry": 15250,
+   "exit": 14800,
+   "weight": 0.5,
+   "lev": 8.77,
+   "acilis": "",
+   "kapanis": "19.11.2026 13:57"
+  },
+  {
+   "sym": "AKBNK",
+   "dir": -1,
+   "entry": 69.0,
+   "exit": 67.6,
+   "weight": 0.25,
+   "lev": 6.27,
+   "acilis": "",
+   "kapanis": "19.11.2026 13:57"
+  },
+  {
+   "sym": "EKGYO",
+   "dir": -1,
+   "entry": 17.95,
+   "exit": 17.82,
+   "weight": 0.5,
+   "lev": 6.21,
+   "acilis": "",
+   "kapanis": "19.11.2026 17:07"
+  },
+  {
+   "sym": "XU030",
+   "dir": -1,
+   "entry": 14300,
+   "exit": 14080,
+   "weight": 0.25,
+   "lev": 8.77,
+   "acilis": "24.11",
+   "kapanis": "25.11.2026 10:36"
+  },
+  {
+   "sym": "PGSUS",
+   "dir": -1,
+   "entry": 153.23,
+   "exit": 156.9,
+   "weight": 0.2,
+   "lev": 6.21,
+   "acilis": "23-24.11",
+   "kapanis": "25.11.2026 11:16"
+  },
+  {
+   "sym": "XU030",
+   "dir": -1,
+   "entry": 13941.0,
+   "exit": 13825,
+   "weight": 0.25,
+   "lev": 8.77,
+   "acilis": "25.11 13:38",
+   "kapanis": "25.11.2026 14:44"
+  },
+  {
+   "sym": "SAHOL",
+   "dir": -1,
+   "entry": 75.45,
+   "exit": 74.78,
+   "weight": 0.25,
+   "lev": 7.58,
+   "acilis": "25.11 13:38",
+   "kapanis": "25.11.2026 14:46"
+  },
+  {
+   "sym": "XU030",
+   "dir": -1,
+   "entry": 13941.0,
+   "exit": 13840,
+   "weight": 0.25,
+   "lev": 8.77,
+   "acilis": "25.11 13:38",
+   "kapanis": "25.11.2026 15:11"
+  }
+ ]
+}
