@@ -1,0 +1,17 @@
+// === TRADER SİNYAL · görselli alarm için Pine eki (henüz alarmlara UYGULANMADI) ===
+// Sinyal/TP/stop anında son 30 mumu ve seviyeleri JSON olarak gönderir.
+// Webhook adresi: https://<sunucu-adresi>/webhook   ·   KEY sunucudaki WEBHOOK_SECRET ile aynı olmalı
+string KEY = "buraya-gizli-anahtar"
+
+barsJson(int n) =>
+    string s = ""
+    for i = n - 1 to 0
+        s += str.tostring(open[i], format.mintick) + "," + str.tostring(high[i], format.mintick) + "," + str.tostring(low[i], format.mintick) + "," + str.tostring(close[i], format.mintick) + (i > 0 ? ";" : "")
+    s
+
+sigJson(string tf, int dir, string ev, float e, float s, float t1, float t2, int sigAgo, string txt) =>
+    "{\"key\":\"" + KEY + "\",\"sym\":\"" + str.replace(syminfo.ticker, "1!", "") + "\",\"tf\":\"" + tf + "\",\"dir\":" + str.tostring(dir) + ",\"event\":\"" + ev + "\",\"e\":" + str.tostring(e) + ",\"s\":" + str.tostring(s) + ",\"t1\":" + str.tostring(t1) + ",\"t2\":" + str.tostring(t2) + ",\"sig_ago\":" + str.tostring(sigAgo) + ",\"bars\":\"" + barsJson(30) + "\",\"text\":\"" + txt + "\"}"
+
+// Kullanım (mevcut alert() çağrılarının yerine):
+// alert(sigJson("15", p15.dir, "entry", p15.e, p15.s, p15.t1, p15.t2, 0, "🔴 AKBNK VİOP 15dk SHORT ..."), alert.freq_once_per_bar_close)
+// 60 dk sinyal 15 dk grafikte çalışıyorsa barsJson yerine request.security ile 60 dk mumları gönderilir (kurulumda ayarlanacak).
