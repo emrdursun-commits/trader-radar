@@ -47,6 +47,17 @@
  "USDTRY": 9.09,
  "EURTRY": 9.62,
  "XU030": 8.77,
- "YKBNK": 7.0,
- "_kaynak": "fintables.com/viop/teminat-tablosu 25.11.2026 11:45 · XU030 (8,77) ve YKBNK (7,00 varsayım) tabloda yok"
+ "YKBNK": 6.21,
+ "_kaynak": "fintables.com/viop/teminat-tablosu 26.11.2026 15:15 · tüm değerler tablodan (YKBNK 6,21, XU030 8,77)",
+ "RUBTRY": 5.65,
+ "VESTL": 6.9,
+ "X10XB": 8.47,
+ "XAGUSD": 5,
+ "XAUTRY": 7.14,
+ "XAUUSD": 10,
+ "XCUUSD": 12.35,
+ "XLBNK": 7.3,
+ "XPDUSD": 5.56,
+ "XPTUSD": 6.67,
+ "XSD25": 8.77
 }
